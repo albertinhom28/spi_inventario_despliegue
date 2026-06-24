@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% block title %}Alertas — SPI-Inventario{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0" style="color: #1F3864;">
+        <i class="bi bi-bell me-2"></i>Alertas de Mantenimiento
+    </h4>
+</div>
+
+<!-- Resumen -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card spi-card-stat p-3 border-danger">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted small mb-1">Vencidos</p>
+                    <h3 class="fw-bold mb-0 text-danger">{{ vencidos|length }}</h3>
+                </div>
+                <i class="bi bi-exclamation-circle card-icon text-danger"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card spi-card-stat p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted small mb-1">Pendientes</p>
+                    <h3 class="fw-bold mb-0" style="color: #FF8C00;">{{ pendientes|length }}</h3>
+                </div>
+                <i class="bi bi-exclamation-triangle card-icon" style="color: #FF8C00;"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card spi-card-stat p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted small mb-1">Próximos</p>
+                    <h3 class="fw-bold mb-0 text-warning">{{ proximos|length }}</h3>
+                </div>
+                <i class="bi bi-bell card-icon text-warning"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card spi-card-stat p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted small mb-1">Al Día</p>
+                    <h3 class="fw-bold mb-0 text-success">{{ al_dia|length }}</h3>
+                </div>
+                <i class="bi bi-check-circle card-icon text-success"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Vencidos -->
+{% if vencidos %}
+<div class="card shadow-sm mb-3 border-danger">
+    <div class="card-header bg-danger text-white fw-semibold">
+        <i class="bi bi-exclamation-circle me-2"></i>Vencidos — más de 90 días sin mantenimiento
+    </div>
+    <div class="card-body p-0">
+        <table class="table spi-table mb-0">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Equipo</th>
+                    <th>Departamento</th>
+                    <th>Días sin Mtto.</th>
+                    <th>Último Mtto.</th>
+                    <th class="text-center">Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in vencidos %}
+                <tr>
+                    <td class="fw-semibold">{{ e.codigo }}</td>
+                    <td>{{ e.marca }} {{ e.modelo }}</td>
+                    <td>{{ e.departamento }}</td>
+                    <td><span class="badge badge-vencido">{{ e.dias_sin_mantenimiento() }} días</span></td>
+                    <td>
+                        {% if e.ultimo_mantenimiento() %}
+                            {{ e.ultimo_mantenimiento().strftime('%d/%m/%Y') }}
+                        {% else %}
+                            <span class="text-muted small">Sin registro</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        {% if current_user.es_tecnico() %}
+                        <a href="{{ url_for('mantenimientos.nuevo', equipo_id=e.id) }}"
+                           class="btn btn-sm btn-danger">
+                            <i class="bi bi-tools me-1"></i>Atender
+                        </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<!-- Pendientes -->
+{% if pendientes %}
+<div class="card shadow-sm mb-3" style="border-color: #FF8C00;">
+    <div class="card-header text-white fw-semibold" style="background-color: #FF8C00;">
+        <i class="bi bi-exclamation-triangle me-2"></i>Pendientes — entre 75 y 89 días sin mantenimiento
+    </div>
+    <div class="card-body p-0">
+        <table class="table spi-table mb-0">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Equipo</th>
+                    <th>Departamento</th>
+                    <th>Días sin Mtto.</th>
+                    <th>Último Mtto.</th>
+                    <th class="text-center">Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in pendientes %}
+                <tr>
+                    <td class="fw-semibold">{{ e.codigo }}</td>
+                    <td>{{ e.marca }} {{ e.modelo }}</td>
+                    <td>{{ e.departamento }}</td>
+                    <td><span class="badge badge-pendiente">{{ e.dias_sin_mantenimiento() }} días</span></td>
+                    <td>
+                        {% if e.ultimo_mantenimiento() %}
+                            {{ e.ultimo_mantenimiento().strftime('%d/%m/%Y') }}
+                        {% else %}
+                            <span class="text-muted small">Sin registro</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        {% if current_user.es_tecnico() %}
+                        <a href="{{ url_for('mantenimientos.nuevo', equipo_id=e.id) }}"
+                           class="btn btn-sm" style="background-color:#FF8C00; color:white;">
+                            <i class="bi bi-tools me-1"></i>Atender
+                        </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<!-- Próximos -->
+{% if proximos %}
+<div class="card shadow-sm mb-3 border-warning">
+    <div class="card-header bg-warning text-dark fw-semibold">
+        <i class="bi bi-bell me-2"></i>Próximos — entre 60 y 74 días sin mantenimiento
+    </div>
+    <div class="card-body p-0">
+        <table class="table spi-table mb-0">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Equipo</th>
+                    <th>Departamento</th>
+                    <th>Días sin Mtto.</th>
+                    <th>Último Mtto.</th>
+                    <th class="text-center">Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in proximos %}
+                <tr>
+                    <td class="fw-semibold">{{ e.codigo }}</td>
+                    <td>{{ e.marca }} {{ e.modelo }}</td>
+                    <td>{{ e.departamento }}</td>
+                    <td><span class="badge badge-proximo">{{ e.dias_sin_mantenimiento() }} días</span></td>
+                    <td>
+                        {% if e.ultimo_mantenimiento() %}
+                            {{ e.ultimo_mantenimiento().strftime('%d/%m/%Y') }}
+                        {% else %}
+                            <span class="text-muted small">Sin registro</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        {% if current_user.es_tecnico() %}
+                        <a href="{{ url_for('mantenimientos.nuevo', equipo_id=e.id) }}"
+                           class="btn btn-sm btn-warning">
+                            <i class="bi bi-tools me-1"></i>Atender
+                        </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<!-- Al día -->
+{% if not vencidos and not pendientes and not proximos %}
+<div class="card p-5 text-center text-muted">
+    <i class="bi bi-check-circle fs-1 mb-3 text-success"></i>
+    <p class="fw-semibold text-success">¡Todos los equipos están al día!</p>
+    <p class="small">No hay equipos con mantenimiento pendiente en este momento.</p>
+</div>
+{% endif %}
+
+{% endblock %}

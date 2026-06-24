@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Inventario — SPI-Inventario{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0" style="color: #1F3864;">
+        <i class="bi bi-pc-display me-2"></i>Inventario de Equipos
+    </h4>
+    {% if current_user.es_tecnico() %}
+    <a href="{{ url_for('inventario.nuevo') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i>Registrar Equipo
+    </a>
+    {% endif %}
+</div>
+
+{% if equipos %}
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <table class="table spi-table mb-0">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Marca / Modelo</th>
+                    <th>Departamento</th>
+                    <th>RAM</th>
+                    <th>Disco</th>
+                    <th>Estado</th>
+                    <th>Último Mtto.</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for equipo in equipos %}
+                <tr>
+                    <td><span class="fw-semibold">{{ equipo.codigo }}</span></td>
+                    <td>{{ equipo.marca }} {{ equipo.modelo }}</td>
+                    <td>{{ equipo.departamento }}</td>
+                    <td>{{ equipo.ram_gb }} GB</td>
+                    <td>{{ equipo.tipo_disco }} {% if equipo.capacidad_disco %}{{ equipo.capacidad_disco }}GB{% endif %}</td>
+                    <td>
+                        {% if equipo.estado == 'operativo' %}
+                            <span class="badge badge-ok">Operativo</span>
+                        {% elif equipo.estado == 'mantenimiento' %}
+                            <span class="badge bg-warning text-dark">Mantenimiento</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Baja</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if equipo.ultimo_mantenimiento() %}
+                            {{ equipo.ultimo_mantenimiento().strftime('%d/%m/%Y') }}
+                        {% else %}
+                            <span class="text-muted small">Sin registro</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        {% if current_user.es_tecnico() %}
+                        <a href="{{ url_for('mantenimientos.historial', equipo_id=equipo.id) }}"
+                            class="btn btn-sm btn-outline-secondary me-1">
+                            <i class="bi bi-clock-history"></i>
+                        </a>
+
+                        <a href="{{ url_for('inventario.editar', id=equipo.id) }}"
+                           class="btn btn-sm btn-outline-primary me-1">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        {% endif %}
+                        {% if current_user.es_admin() %}
+                        <form method="POST" action="{{ url_for('inventario.eliminar', id=equipo.id) }}"
+                              style="display:inline"
+                              onsubmit="return confirm('¿Eliminar el equipo {{ equipo.codigo }}?')">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="card p-5 text-center text-muted">
+    <i class="bi bi-pc-display fs-1 mb-3"></i>
+    <p class="mb-3">No hay equipos registrados aún.</p>
+    {% if current_user.es_tecnico() %}
+    <a href="{{ url_for('inventario.nuevo') }}" class="btn btn-primary mx-auto" style="width:fit-content">
+        <i class="bi bi-plus-circle me-1"></i>Registrar primer equipo
+    </a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

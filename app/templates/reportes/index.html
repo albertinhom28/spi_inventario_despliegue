@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — SPI-Inventario{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0" style="color: #1F3864;">
+        <i class="bi bi-speedometer2 me-2"></i>Dashboard
+    </h4>
+    <span class="text-muted small">Bienvenido, {{ current_user.nombre }}</span>
+</div>
+
+<!-- Tarjetas de resumen -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card spi-card-stat p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted small mb-1">Total Equipos</p>
+                    <h3 class="fw-bold mb-0">{{ total_equipos }}</h3>
+                </div>
+                <i class="bi bi-pc-display card-icon text-primary"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card spi-card-stat p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted small mb-1">Equipos Operativos</p>
+                    <h3 class="fw-bold mb-0 text-success">{{ equipos_operativos }}</h3>
+                </div>
+                <i class="bi bi-check-circle card-icon text-success"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card spi-card-stat p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted small mb-1">Alertas Activas</p>
+                    <h3 class="fw-bold mb-0 text-danger">{{ alertas_activas }}</h3>
+                </div>
+                <i class="bi bi-bell card-icon text-danger"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card spi-card-stat p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted small mb-1">Mantenimientos</p>
+                    <h3 class="fw-bold mb-0 text-info">{{ total_mantenimientos }}</h3>
+                </div>
+                <i class="bi bi-tools card-icon text-info"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gráficos -->
+<div class="row g-3 mb-4">
+    <div class="col-md-5">
+        <div class="card shadow-sm p-3">
+            <h6 class="fw-semibold mb-3" style="color: #1F3864;">
+                <i class="bi bi-pie-chart me-2"></i>Estado del Parque
+            </h6>
+            <canvas id="chartEstado" height="220"></canvas>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm p-3">
+            <h6 class="fw-semibold mb-3" style="color: #1F3864;">
+                <i class="bi bi-bar-chart me-2"></i>Tipo de Mantenimientos
+            </h6>
+            <canvas id="chartMtto" height="220"></canvas>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm p-3">
+            <h6 class="fw-semibold mb-3" style="color: #1F3864;">
+                <i class="bi bi-bell me-2"></i>Nivel de Alertas
+            </h6>
+            <canvas id="chartAlertas" height="220"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Últimos mantenimientos -->
+<div class="card shadow-sm">
+    <div class="card-header fw-semibold" style="color: #1F3864; background: #EBF3FB;">
+        <i class="bi bi-clock-history me-2"></i>Últimos Mantenimientos Registrados
+    </div>
+    {% if ultimos_mantenimientos %}
+    <div class="card-body p-0">
+        <table class="table spi-table mb-0">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Equipo</th>
+                    <th>Tipo</th>
+                    <th>Técnico</th>
+                    <th>Actividades</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in ultimos_mantenimientos %}
+                <tr>
+                    <td class="text-nowrap">{{ m.fecha.strftime('%d/%m/%Y') }}</td>
+                    <td class="fw-semibold">{{ m.equipo.codigo }}</td>
+                    <td>
+                        {% if m.tipo == 'preventivo' %}
+                            <span class="badge badge-ok">Preventivo</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">Correctivo</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ m.tecnico_responsable }}</td>
+                    <td class="text-truncate" style="max-width: 250px;">{{ m.actividades }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="card-body text-center text-muted py-4">
+        <p class="mb-0">No hay mantenimientos registrados aún.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Gráfico de estado del parque
+new Chart(document.getElementById('chartEstado'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Operativo', 'Mantenimiento', 'Baja'],
+        datasets: [{
+            data: [{{ equipos_operativos }}, {{ equipos_mtto }}, {{ equipos_baja }}],
+            backgroundColor: ['#28A745', '#FFC107', '#6C757D'],
+        }]
+    },
+    options: { plugins: { legend: { position: 'bottom' } } }
+});
+
+// Gráfico de tipos de mantenimiento
+new Chart(document.getElementById('chartMtto'), {
+    type: 'bar',
+    data: {
+        labels: ['Preventivo', 'Correctivo'],
+        datasets: [{
+            label: 'Mantenimientos',
+            data: [{{ preventivos }}, {{ correctivos }}],
+            backgroundColor: ['#28A745', '#FFC107'],
+        }]
+    },
+    options: {
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+    }
+});
+
+// Gráfico de alertas
+new Chart(document.getElementById('chartAlertas'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Vencidos', 'Pendientes', 'Próximos'],
+        datasets: [{
+            data: [{{ vencidos }}, {{ pendientes }}, {{ proximos }}],
+            backgroundColor: ['#DC3545', '#FF8C00', '#FFC107'],
+        }]
+    },
+    options: { plugins: { legend: { position: 'bottom' } } }
+});
+</script>
+{% endblock %}

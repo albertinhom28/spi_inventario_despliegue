@@ -1,0 +1,87 @@
+:root {
+    --spi-blue:       #2E75B6;
+    --spi-dark:       #1F3864;
+    --spi-sidebar-w:  220px;
+    --spi-proximo:    #FFC107;
+    --spi-pendiente:  #FF8C00;
+    --spi-vencido:    #DC3545;
+    --spi-ok:         #28A745;
+}
+
+.spi-navbar {
+    background-color: var(--spi-dark);
+    height: 56px;
+}
+
+.spi-badge-rol {
+    background-color: var(--spi-blue);
+    font-size: 0.7rem;
+}
+
+.spi-sidebar {
+    width: var(--spi-sidebar-w);
+    min-width: var(--spi-sidebar-w);
+    background-color: #ffffff;
+    border-right: 1px solid #dee2e6;
+}
+
+.spi-nav-link {
+    color: #495057;
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+    transition: background 0.15s, color 0.15s;
+}
+
+.spi-nav-link:hover {
+    background-color: #e8f0fb;
+    color: var(--spi-blue);
+}
+
+.spi-nav-link.active {
+    background-color: var(--spi-blue);
+    color: #ffffff !important;
+}
+
+.spi-card-stat {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 1px 6px rgba(0,0,0,.08);
+}
+
+.spi-card-stat .card-icon {
+    font-size: 2.2rem;
+    opacity: .85;
+}
+
+.badge-proximo   { background-color: var(--spi-proximo);   color: #000; }
+.badge-pendiente { background-color: var(--spi-pendiente); color: #fff; }
+.badge-vencido   { background-color: var(--spi-vencido);   color: #fff; }
+.badge-ok        { background-color: var(--spi-ok);        color: #fff; }
+
+.spi-table thead th {
+    background-color: #BDD7EE;
+    color: var(--spi-dark);
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.spi-table tbody tr:hover {
+    background-color: #f0f6ff;
+}
+
+.spi-login-bg {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--spi-dark) 0%, var(--spi-blue) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spi-login-card {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.25);
+}

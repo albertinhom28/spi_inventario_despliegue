@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Registrar Equipo — SPI-Inventario{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0" style="color: #1F3864;">
+        <i class="bi bi-plus-circle me-2"></i>Registrar Nuevo Equipo
+    </h4>
+    <a href="{{ url_for('inventario.index') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>Volver
+    </a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-4">
+        <form method="POST" action="{{ url_for('inventario.nuevo') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Código <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="codigo" placeholder="Ej: SPI-PC-001" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Marca <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="marca" placeholder="Ej: Dell, HP, Lenovo" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Modelo <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="modelo" placeholder="Ej: OptiPlex 7090" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Serial</label>
+                    <input type="text" class="form-control" name="serial" placeholder="Número de serie">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Departamento <span class="text-danger">*</span></label>
+                    <select class="form-select" name="departamento" required>
+                        <option value="">Seleccionar...</option>
+                        <option>Recursos Humanos</option>
+                        <option>Captación y Desarrollo</option>
+                        <option>Tecnología de Información</option>
+                        <option>Administración</option>
+                        <option>Gerencia</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Estado <span class="text-danger">*</span></label>
+                    <select class="form-select" name="estado" required>
+                        <option value="operativo">Operativo</option>
+                        <option value="mantenimiento">En Mantenimiento</option>
+                        <option value="baja">Baja</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">RAM (GB) <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control" name="ram_gb" placeholder="Ej: 8" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Tipo de Disco <span class="text-danger">*</span></label>
+                    <select class="form-select" name="tipo_disco" required>
+                        <option value="">Seleccionar...</option>
+                        <option value="SSD">SSD</option>
+                        <option value="HDD">HDD</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Capacidad Disco (GB)</label>
+                    <input type="number" class="form-control" name="capacidad_disco" placeholder="Ej: 500">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Sistema Operativo</label>
+                    <input type="text" class="form-control" name="sistema_operativo" placeholder="Ej: Windows 11">
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <a href="{{ url_for('inventario.index') }}" class="btn btn-outline-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save me-1"></i>Guardar Equipo
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

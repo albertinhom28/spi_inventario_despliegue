@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Mantenimientos — SPI-Inventario{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0" style="color: #1F3864;">
+        <i class="bi bi-tools me-2"></i>Historial de Mantenimientos
+    </h4>
+</div>
+
+{% if mantenimientos %}
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <table class="table spi-table mb-0">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Equipo</th>
+                    <th>Departamento</th>
+                    <th>Tipo</th>
+                    <th>Técnico</th>
+                    <th>Actividades</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in mantenimientos %}
+                <tr>
+                    <td>{{ m.fecha.strftime('%d/%m/%Y') }}</td>
+                    <td><span class="fw-semibold">{{ m.equipo.codigo }}</span></td>
+                    <td>{{ m.equipo.departamento }}</td>
+                    <td>
+                        {% if m.tipo == 'preventivo' %}
+                            <span class="badge badge-ok">Preventivo</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">Correctivo</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ m.tecnico_responsable }}</td>
+                    <td class="text-truncate" style="max-width: 200px;">{{ m.actividades }}</td>
+                    <td class="text-center">
+                        <a href="{{ url_for('mantenimientos.historial', equipo_id=m.equipo_id) }}"
+                           class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-clock-history"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="card p-5 text-center text-muted">
+    <i class="bi bi-tools fs-1 mb-3"></i>
+    <p>No hay mantenimientos registrados aún.</p>
+    <p class="small">Ve al módulo de Inventario, selecciona un equipo y registra su primer mantenimiento.</p>
+</div>
+{% endif %}
+{% endblock %}

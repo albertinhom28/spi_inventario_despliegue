@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Editar Equipo — SPI-Inventario{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0" style="color: #1F3864;">
+        <i class="bi bi-pencil me-2"></i>Editar Equipo — {{ equipo.codigo }}
+    </h4>
+    <a href="{{ url_for('inventario.index') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>Volver
+    </a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-4">
+        <form method="POST" action="{{ url_for('inventario.editar', id=equipo.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Código</label>
+                    <input type="text" class="form-control" value="{{ equipo.codigo }}" disabled>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Marca <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="marca" value="{{ equipo.marca }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Modelo <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="modelo" value="{{ equipo.modelo }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Serial</label>
+                    <input type="text" class="form-control" name="serial" value="{{ equipo.serial or '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Departamento <span class="text-danger">*</span></label>
+                    <select class="form-select" name="departamento" required>
+                        {% for dep in ['Recursos Humanos', 'Captación y Desarrollo', 'Tecnología de Información', 'Administración', 'Gerencia'] %}
+                        <option value="{{ dep }}" {% if equipo.departamento == dep %}selected{% endif %}>{{ dep }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Estado <span class="text-danger">*</span></label>
+                    <select class="form-select" name="estado" required>
+                        <option value="operativo" {% if equipo.estado == 'operativo' %}selected{% endif %}>Operativo</option>
+                        <option value="mantenimiento" {% if equipo.estado == 'mantenimiento' %}selected{% endif %}>En Mantenimiento</option>
+                        <option value="baja" {% if equipo.estado == 'baja' %}selected{% endif %}>Baja</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">RAM (GB) <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control" name="ram_gb" value="{{ equipo.ram_gb }}" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Tipo de Disco <span class="text-danger">*</span></label>
+                    <select class="form-select" name="tipo_disco" required>
+                        <option value="SSD" {% if equipo.tipo_disco == 'SSD' %}selected{% endif %}>SSD</option>
+                        <option value="HDD" {% if equipo.tipo_disco == 'HDD' %}selected{% endif %}>HDD</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Capacidad Disco (GB)</label>
+                    <input type="number" class="form-control" name="capacidad_disco" value="{{ equipo.capacidad_disco or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Sistema Operativo</label>
+                    <input type="text" class="form-control" name="sistema_operativo" value="{{ equipo.sistema_operativo or '' }}">
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <a href="{{ url_for('inventario.index') }}" class="btn btn-outline-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save me-1"></i>Guardar Cambios
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
