@@ -46,7 +46,8 @@
                     <select class="form-select" name="estado" required>
                         <option value="operativo" {% if equipo.estado == 'operativo' %}selected{% endif %}>Operativo</option>
                         <option value="mantenimiento" {% if equipo.estado == 'mantenimiento' %}selected{% endif %}>En Mantenimiento</option>
-                        <option value="baja" {% if equipo.estado == 'baja' %}selected{% endif %}>Baja</option>
+                        <option value="averiado" {% if equipo.estado == 'averiado' %}selected{% endif %}>Averiado</option>
+                        <option value="desincorporado" {% if equipo.estado == 'Desincorporado' %}selected{% endif %}>Desincorporado</option>
                     </select>
                 </div>
                 <div class="col-md-3">
@@ -56,6 +57,7 @@
                 <div class="col-md-3">
                     <label class="form-label fw-semibold">Tipo de Disco <span class="text-danger">*</span></label>
                     <select class="form-select" name="tipo_disco" required>
+                        <option value="NVME M2" {% if equipo.tipo_disco == 'NVME M2' %}selected{% endif %}>NVME M2</option>
                         <option value="SSD" {% if equipo.tipo_disco == 'SSD' %}selected{% endif %}>SSD</option>
                         <option value="HDD" {% if equipo.tipo_disco == 'HDD' %}selected{% endif %}>HDD</option>
                     </select>

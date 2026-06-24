@@ -139,10 +139,10 @@
 new Chart(document.getElementById('chartEstado'), {
     type: 'doughnut',
     data: {
-        labels: ['Operativo', 'Mantenimiento', 'Baja'],
+        labels: ['Operativo', 'Mantenimiento', 'Averiado', 'Desincorporado'],
         datasets: [{
-            data: [{{ equipos_operativos }}, {{ equipos_mtto }}, {{ equipos_baja }}],
-            backgroundColor: ['#28A745', '#FFC107', '#6C757D'],
+            data: [{{ equipos_operativos }}, {{ equipos_mtto }}, {{ equipos_averiados }}, {{ equipos_desincorp }}],
+            backgroundColor: ['#28A745', '#FFC107', '#DC3545', '#6C757D'],
         }]
     },
     options: { plugins: { legend: { position: 'bottom' } } }

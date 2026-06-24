@@ -43,9 +43,11 @@
                         {% if equipo.estado == 'operativo' %}
                             <span class="badge badge-ok">Operativo</span>
                         {% elif equipo.estado == 'mantenimiento' %}
-                            <span class="badge bg-warning text-dark">Mantenimiento</span>
+                            <span class="badge bg-warning">Mantenimiento</span>
+                        {% elif equipo.estado == 'averiado' %}
+                            <span class="badge text-bg-danger">Averiado</span>
                         {% else %}
-                            <span class="badge bg-secondary">Baja</span>
+                            <span class="badge bg-secondary">Desincorporado</span>
                         {% endif %}
                     </td>
                     <td>

@@ -11,7 +11,8 @@ def index():
     total_equipos     = Equipo.query.count()
     equipos_operativos = Equipo.query.filter_by(estado='operativo').count()
     equipos_mtto      = Equipo.query.filter_by(estado='mantenimiento').count()
-    equipos_baja      = Equipo.query.filter_by(estado='baja').count()
+    equipos_desincorp      = Equipo.query.filter_by(estado='desincorporado').count()
+    equipos_averiados    = Equipo.query.filter_by(estado='averiado').count()
     total_mantenimientos = Mantenimiento.query.count()
     preventivos       = Mantenimiento.query.filter_by(tipo='preventivo').count()
     correctivos       = Mantenimiento.query.filter_by(tipo='correctivo').count()
@@ -31,7 +32,8 @@ def index():
         total_equipos=total_equipos,
         equipos_operativos=equipos_operativos,
         equipos_mtto=equipos_mtto,
-        equipos_baja=equipos_baja,
+        equipos_desincorp=equipos_desincorp,
+        equipos_averiados=equipos_averiados,
         total_mantenimientos=total_mantenimientos,
         preventivos=preventivos,
         correctivos=correctivos,
