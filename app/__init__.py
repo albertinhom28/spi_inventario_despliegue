@@ -44,4 +44,10 @@ def create_app(config_name='default'):
     app.register_blueprint(reportes_bp)
     app.register_blueprint(admin_bp)
 
+    from flask import redirect, url_for
+
+    @app.route('/')
+    def index():
+        return redirect(url_for('auth.login'))
+
     return app
