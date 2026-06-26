@@ -13,6 +13,43 @@
     {% endif %}
 </div>
 
+<!-- Barra de búsqueda y filtros -->
+<div class="card shadow-sm mb-3 p-3">
+    <div class="row g-2 align-items-center">
+        <div class="col-md-5">
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input type="text" id="busqueda" class="form-control"
+                       placeholder="Buscar por código, marca o modelo...">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <select id="filtroDepartamento" class="form-select">
+                <option value="">Todos los departamentos</option>
+                <option>Recursos Humanos</option>
+                <option>Captación y Desarrollo</option>
+                <option>Tecnología de Información</option>
+                <option>Administración</option>
+                <option>Gerencia</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select id="filtroEstado" class="form-select">
+                <option value="">Todos los estados</option>
+                <option value="operativo">Operativo</option>
+                <option value="mantenimiento">Mantenimiento</option>
+                <option value="averiado">Averiado</option>
+                <option value="desincorporado">Desincorporado</option>
+            </select>
+        </div>
+        <div class="col-md-1">
+            <button class="btn btn-outline-secondary w-100" onclick="limpiarFiltros()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
 {% if equipos %}
 <div class="card shadow-sm">
     <div class="card-body p-0">
@@ -97,4 +134,41 @@
     {% endif %}
 </div>
 {% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function filtrarTabla() {
+    const busqueda     = document.getElementById('busqueda').value.toLowerCase();
+    const departamento = document.getElementById('filtroDepartamento').value.toLowerCase();
+    const estado       = document.getElementById('filtroEstado').value.toLowerCase();
+    const filas        = document.querySelectorAll('tbody tr');
+
+    filas.forEach(fila => {
+        const codigo  = fila.cells[0].textContent.toLowerCase();
+        const marca   = fila.cells[1].textContent.toLowerCase();
+        const depto   = fila.cells[2].textContent.toLowerCase();
+        const badgeEstado = fila.cells[5].textContent.toLowerCase().trim();
+
+        const coincideBusqueda     = codigo.includes(busqueda) || marca.includes(busqueda);
+        const coincideDepartamento = departamento === '' || depto.includes(departamento);
+        const coincideEstado       = estado === '' || badgeEstado.includes(estado);
+
+        fila.style.display = coincideBusqueda && coincideDepartamento && coincideEstado ? '' : 'none';
+    });
+}
+
+function limpiarFiltros() {
+    document.getElementById('busqueda').value = '';
+    document.getElementById('filtroDepartamento').value = '';
+    document.getElementById('filtroEstado').value = '';
+    filtrarTabla();
+}
+
+document.getElementById('busqueda').addEventListener('input', filtrarTabla);
+document.getElementById('filtroDepartamento').addEventListener('change', filtrarTabla);
+document.getElementById('filtroEstado').addEventListener('change', filtrarTabla);
+</script>
+
 {% endblock %}
