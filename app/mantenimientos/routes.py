@@ -39,3 +39,30 @@ def historial(equipo_id):
                                         .order_by(Mantenimiento.fecha.desc()).all()
     return render_template('mantenimientos/historial.html',
                            equipo=equipo, mantenimientos=mantenimientos)
+
+@mantenimientos_bp.route('/editar/<int:id>', methods=['GET', 'POST'])
+@login_required
+def editar(id):
+    mantenimiento = Mantenimiento.query.get_or_404(id)
+    equipo = mantenimiento.equipo
+    if request.method == 'POST':
+        mantenimiento.fecha               = request.form.get('fecha')
+        mantenimiento.tipo                = request.form.get('tipo')
+        mantenimiento.actividades         = request.form.get('actividades')
+        mantenimiento.tecnico_responsable = request.form.get('tecnico_responsable')
+        mantenimiento.observaciones       = request.form.get('observaciones')
+        mantenimiento.updated_by          = current_user.id
+        db.session.commit()
+        flash('Mantenimiento actualizado correctamente.', 'success')
+        return redirect(url_for('mantenimientos.historial', equipo_id=equipo.id))
+    return render_template('mantenimientos/editar.html', mantenimiento=mantenimiento, equipo=equipo, today=date.today())
+
+@mantenimientos_bp.route('/eliminar/<int:id>', methods=['POST'])
+@login_required
+def eliminar(id):
+    mantenimiento = Mantenimiento.query.get_or_404(id)
+    equipo_id = mantenimiento.equipo_id
+    db.session.delete(mantenimiento)
+    db.session.commit()
+    flash('Mantenimiento eliminado correctamente.', 'success')
+    return redirect(url_for('mantenimientos.historial', equipo_id=equipo_id))

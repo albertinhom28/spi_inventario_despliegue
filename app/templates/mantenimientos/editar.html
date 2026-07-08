@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Editar Mantenimiento — SPI-Inventario{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0" style="color: #1F3864;">
+        <i class="bi bi-pencil me-2"></i>Editar Mantenimiento
+    </h4>
+    <a href="{{ url_for('mantenimientos.historial', equipo_id=equipo.id) }}"
+       class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>Volver
+    </a>
+</div>
+
+<div class="card shadow-sm mb-3">
+    <div class="card-body py-2 px-4">
+        <span class="text-muted small me-3"><i class="bi bi-pc-display me-1"></i>Equipo:</span>
+        <span class="fw-semibold">{{ equipo.codigo }}</span>
+        <span class="text-muted mx-2">—</span>
+        <span>{{ equipo.marca }} {{ equipo.modelo }}</span>
+        <span class="text-muted mx-2">—</span>
+        <span class="text-muted small">{{ equipo.departamento }}</span>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-4">
+        <form method="POST" action="{{ url_for('mantenimientos.editar', id=mantenimiento.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Fecha <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" name="fecha"
+                           value="{{ mantenimiento.fecha.strftime('%Y-%m-%d') }}"
+                           max="{{ today }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Tipo <span class="text-danger">*</span></label>
+                    <select class="form-select" name="tipo" required>
+                        <option value="preventivo" {% if mantenimiento.tipo == 'preventivo' %}selected{% endif %}>Preventivo</option>
+                        <option value="correctivo" {% if mantenimiento.tipo == 'correctivo' %}selected{% endif %}>Correctivo</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Técnico Responsable <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="tecnico_responsable"
+                           value="{{ mantenimiento.tecnico_responsable }}" required>
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-semibold">Actividades Realizadas <span class="text-danger">*</span></label>
+                    <textarea class="form-control" name="actividades" rows="4" required>{{ mantenimiento.actividades }}</textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-semibold">Observaciones</label>
+                    <textarea class="form-control" name="observaciones" rows="2">{{ mantenimiento.observaciones or '' }}</textarea>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <a href="{{ url_for('mantenimientos.historial', equipo_id=equipo.id) }}"
+                   class="btn btn-outline-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save me-1"></i>Guardar Cambios
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
